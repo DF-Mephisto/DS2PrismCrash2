@@ -60,12 +60,6 @@ void enableScript(ScriptEnum id)
 		dataOffset += 8;
 	}
 
-	for (DWORD64 bufAddr : data.bufferAddresses)
-	{
-		memcpy((char*)data.scriptAddress + scriptSize + 5 + dataOffset, &bufAddr, 8);
-		dataOffset += 8;
-	}
-
 	DWORD jmpAddress = 0 - ((moduleAddr + data.instructionOffset) - (DWORD64)data.scriptAddress) - 5;
 	char* jmpInstr = new char[data.instructionSize];
 	initJmpInstr(jmpInstr, data.instructionSize);
