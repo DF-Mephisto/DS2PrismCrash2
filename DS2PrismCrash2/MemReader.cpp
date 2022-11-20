@@ -13,8 +13,6 @@ extern "C"
 void memoryInit()
 {
 	moduleAddr = (DWORD64)GetModuleHandle(L"DarkSoulsII.exe");
-
-	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 int64_t getScriptSize(LPVOID script)
