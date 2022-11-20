@@ -13,17 +13,17 @@ enum class ScriptEnum
 
 struct Buffer
 {
-	int size;
-	char* data;
+	const int size;
+	const char* const data;
 };
 
 struct ScriptData
 {
-	LPVOID scriptCode;
-	DWORD64 instructionOffset;
-	uint16_t instructionSize;
-	char* originalInstruction;
-	vector<Buffer> buffers;
+	const LPVOID scriptCode;
+	const DWORD64 instructionOffset;
+	const uint16_t instructionSize;
+	const char* const originalInstruction;
+	const vector<Buffer> buffers;
 	bool enabled;
 	DWORD64 scriptAddress;
 	vector<DWORD64> bufferAddresses;
