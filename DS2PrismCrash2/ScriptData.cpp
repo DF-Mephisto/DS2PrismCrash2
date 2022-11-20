@@ -1,0 +1,19 @@
+#include "stdafx.h"
+#include "ScriptData.h"
+
+vector<ScriptData> scripts{
+	//PrismCrash
+	{
+		crashProc,
+		0x3337C6,
+		7,
+		new char[] {"\x0F\x2F\x82\xAC\x01\x00\x00"},
+		{
+			{
+				1024,
+				new char[1024] {"\x00\x00\x00\x00\x00\x00\x00\x00\x72\xE5\x18\x00\x03\x00\x30\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}
+			}
+		},
+		false
+	}
+};
