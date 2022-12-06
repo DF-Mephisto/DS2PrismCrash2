@@ -88,6 +88,18 @@ void disableScript(ScriptEnum id)
 	data.bufferAddresses.clear();
 }
 
+void nopInstruction(ScriptEnum id)
+{
+	ScriptData& data = scripts[static_cast<int>(id)];
+	if (data.enabled)
+		return;
+	data.enabled = true;
+
+	vector<char> nopInstr(data.instructionSize, 0x90);
+
+	memcpy((LPVOID)(moduleAddr + data.instructionOffset), nopInstr.data(), data.instructionSize);
+}
+
 bool allocScriptMem(ScriptEnum id)
 {
 	ScriptData& data = scripts[static_cast<int>(id)];

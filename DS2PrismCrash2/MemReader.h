@@ -6,6 +6,7 @@
 void memoryInit();
 int64_t getScriptSize(LPVOID script);
 void enableScript(ScriptEnum id);
+void nopInstruction(ScriptEnum id);
 void disableScript(ScriptEnum id);
 void initJmpInstr(char* arr, int size);
 DWORD64	alloc(int size);
