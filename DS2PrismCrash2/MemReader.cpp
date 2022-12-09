@@ -5,14 +5,13 @@
 
 using namespace std;
 
-extern "C"
-{
-	DWORD64 moduleAddr;
-}
+
+MODULEINFO mInfo;
+
 
 void memoryInit()
 {
-	moduleAddr = (DWORD64)GetModuleHandle(L"DarkSoulsII.exe");
+	GetModuleInformation(GetCurrentProcess(), GetModuleHandleW(L"DarkSoulsII.exe"), &mInfo, sizeof(mInfo));
 }
 
 int64_t getScriptSize(LPVOID script)
@@ -38,15 +37,18 @@ void enableScript(ScriptEnum id)
 		return;
 	}
 
+	DWORD64 instAddress = getInstructionAddress(data.instInfo);
+	data.instAddress = instAddress;
+	
 	uint16_t scriptSize = getScriptSize(data.scriptCode);
 
-	DWORD retAddress = 7 - 5 - ((DWORD64)data.scriptAddress - (moduleAddr + data.instructionOffset)) - scriptSize;
+	DWORD retAddress = 7 - 5 - ((DWORD64)data.scriptAddress - instAddress) - scriptSize;
 	char retInstr[5] = { 0xE9 };
 
 	memcpy((LPVOID)data.scriptAddress, data.scriptCode, scriptSize);
 	memcpy(retInstr + 1, &retAddress, 4);
 	memcpy((char*)data.scriptAddress + scriptSize, &retInstr, 5);
-	memcpy((char*)data.scriptAddress + scriptSize + 5, &moduleAddr, 8);
+	memcpy((char*)data.scriptAddress + scriptSize + 5, &mInfo.lpBaseOfDll, 8);
 
 	int dataOffset = 8;
 
@@ -58,11 +60,12 @@ void enableScript(ScriptEnum id)
 		dataOffset += 8;
 	}
 
-	DWORD jmpAddress = 0 - ((moduleAddr + data.instructionOffset) - (DWORD64)data.scriptAddress) - 5;
-	char* jmpInstr = new char[data.instructionSize];
-	initJmpInstr(jmpInstr, data.instructionSize);
+	DWORD jmpAddress = 0 - (instAddress - (DWORD64)data.scriptAddress) - 5;
+	char* jmpInstr = new char[data.instInfo.instructionSize]{ '\xE9' };
+	memset(jmpInstr + 1, 0x90, data.instInfo.instructionSize - 1);
+
 	memcpy(jmpInstr + 1, &jmpAddress, 4);
-	memcpy((LPVOID)(moduleAddr + data.instructionOffset), jmpInstr, data.instructionSize);
+	memcpy((LPVOID)instAddress, jmpInstr, data.instInfo.instructionSize);
 	delete[] jmpInstr;
 }
 
@@ -74,7 +77,9 @@ void disableScript(ScriptEnum id)
 		return;
 	data.enabled = false;
 
-	memcpy((LPVOID)(moduleAddr + data.instructionOffset), data.originalInstruction, data.instructionSize);
+	DWORD64 instAddress = data.instAddress;
+
+	memcpy((LPVOID)instAddress, data.instInfo.originalInstruction, data.instInfo.instructionSize);
 
 	if (data.scriptAddress)
 	{
@@ -95,9 +100,8 @@ void nopInstruction(ScriptEnum id)
 		return;
 	data.enabled = true;
 
-	vector<char> nopInstr(data.instructionSize, 0x90);
-
-	memcpy((LPVOID)(moduleAddr + data.instructionOffset), nopInstr.data(), data.instructionSize);
+	DWORD64 instAddress = getInstructionAddress(data.instInfo);
+	memset((LPVOID)instAddress, 0x90, data.instInfo.instructionSize);
 }
 
 bool allocScriptMem(ScriptEnum id)
@@ -132,7 +136,7 @@ DWORD64	alloc(int size)
 	DWORD64 regionAddress = 0;
 	DWORD64 offset = 0;
 	DWORD64 allocatedMemory = 0;
-	while ((regionAddress = moduleAddr - offset) <= moduleAddr)
+	while ((regionAddress = (DWORD64)mInfo.lpBaseOfDll - offset) <= (DWORD64)mInfo.lpBaseOfDll)
 	{
 		VirtualQuery((LPCVOID)regionAddress, &mbi, sizeof(MEMORY_BASIC_INFORMATION));
 
@@ -151,9 +155,50 @@ DWORD64	alloc(int size)
 	return allocatedMemory;
 }
 
-void initJmpInstr(char* arr, int size)
+DWORD64 getInstructionAddress(const InstructionInfo& const info)
 {
-	arr[0] = 0xE9;
-	for (int i = 1; i < size; i++)
-		arr[i] = 0x90;
+	DWORD64 instAddress;
+
+	switch (info.searchType)
+	{
+	case SearchType::OFFSET:
+		instAddress = (DWORD64)mInfo.lpBaseOfDll + info.offset;
+		break;
+
+	case SearchType::AOBSCAN:
+		instAddress = findSignature(mInfo, info.aob, info.aobSize);
+		break;
+	}
+
+	return instAddress;
+}
+
+DWORD64 findSignature(MODULEINFO& mInfo, const char* const aob , const size_t aobSize)
+{
+	MEMORY_BASIC_INFORMATION mbi = { 0 };
+	DWORD64 offset = 0;
+	DWORD64 res = 0;
+	while (offset < mInfo.SizeOfImage) {
+		VirtualQuery((LPCVOID)((DWORD64)mInfo.lpBaseOfDll + offset), &mbi, sizeof(MEMORY_BASIC_INFORMATION));
+		if (mbi.State != MEM_FREE) {
+			for (int i = 0; i <= mbi.RegionSize - aobSize; i++) {
+				if (dataCompare((char*)mbi.BaseAddress + i, aob, aobSize)) {
+					res = (DWORD64)mbi.BaseAddress + i;
+					goto ret;
+				}
+			}
+		}
+		offset += mbi.RegionSize;
+	}
+
+ret:
+	return res;
+}
+
+bool dataCompare(const char* data, const char* sign, int size)
+{
+	for (int i = 0; i < size; i++) {
+		if (data[i] != sign[i]) return false;
+	}
+	return true;
 }

@@ -11,6 +11,21 @@ enum class ScriptEnum
 	PrismCrash = 0
 };
 
+enum class SearchType
+{
+	OFFSET, AOBSCAN
+};
+
+struct InstructionInfo
+{
+	const SearchType searchType;
+	const DWORD64 offset;
+	const size_t aobSize;
+	const char* const aob;
+	const uint16_t instructionSize;
+	const char* const originalInstruction;
+};
+
 struct Buffer
 {
 	const int size;
@@ -20,11 +35,10 @@ struct Buffer
 struct ScriptData
 {
 	const LPVOID scriptCode;
-	const DWORD64 instructionOffset;
-	const uint16_t instructionSize;
-	const char* const originalInstruction;
+	const InstructionInfo instInfo;
 	const vector<Buffer> buffers;
 	bool enabled;
+	DWORD64 instAddress;
 	DWORD64 scriptAddress;
 	vector<DWORD64> bufferAddresses;
 };

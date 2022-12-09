@@ -1,13 +1,18 @@
 #include "stdafx.h"
 #include "ScriptData.h"
 
-vector<ScriptData> scripts{
+vector<ScriptData> scripts = {
 	//PrismCrash
 	{
 		crashProc,
-		0x3337C6,
-		7,
-		new char[] {"\x0F\x2F\x82\xAC\x01\x00\x00"},
+		{
+			SearchType::AOBSCAN,
+			0,
+			11,
+			new char[12] {"\x0F\x2F\x82\xAC\x01\x00\x00\x0F\x93\xC0\xC3"},
+			7,
+			new char[8] {"\x0F\x2F\x82\xAC\x01\x00\x00"}
+		},
 		{
 			{
 				1024,
