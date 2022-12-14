@@ -4,11 +4,12 @@
 Pointer::Pointer(DWORD32* offsets, size_t length) :
 	offsets(offsets), length(length)
 {
-
+	
 }
 
 Pointer::Pointer(const Pointer& p)
 {
+	length = p.length;
 	offsets = new DWORD32[p.length];
 	memcpy(offsets, p.offsets, p.length * 4);
 }
@@ -41,7 +42,7 @@ vector<Pointer> pointers = {
 	},
 	//GODMODE
 	{
-		new DWORD32[10] { 0x16148F0, 0xD0, 0xB8, 0x5FC },
+		new DWORD32[4] { 0x16148F0, 0xD0, 0xB8, 0x5FC },
 		4
 	}
 };

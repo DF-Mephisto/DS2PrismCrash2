@@ -15,7 +15,7 @@ struct Pointer
 
 enum class PNAME
 {
-	X1, X2, Y1, Y2, GODMODE
+	X1 = 0, X2, Y1, Y2, GODMODE
 };
 
 extern vector<Pointer> pointers;

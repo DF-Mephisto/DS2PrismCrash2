@@ -33,7 +33,13 @@ LRESULT CALLBACK keyDownHook(int code, WPARAM wParam, LPARAM lParam)
 			MessageBeep(0);
 			disableScript(ScriptEnum::PrismCrash);
 			break;
+
+		case VK_F3:
+			MessageBeep(0);
+			writePointer<BYTE>(PNAME::GODMODE, 1);
+			break;
 		}
+
 	}
 
 	return CallNextHookEx(SysHook, code, wParam, lParam);
