@@ -1,0 +1,47 @@
+#include "stdafx.h"
+#include "Pointer.h"
+
+Pointer::Pointer(DWORD32* offsets, size_t length) :
+	offsets(offsets), length(length)
+{
+
+}
+
+Pointer::Pointer(const Pointer& p)
+{
+	offsets = new DWORD32[p.length];
+	memcpy(offsets, p.offsets, p.length * 4);
+}
+
+Pointer::~Pointer()
+{
+	delete[] offsets;
+}
+
+vector<Pointer> pointers = {
+	//X1
+	{
+		new DWORD32[10] { 0x16148F0, 0x98, 0x28, 0x0, 0x100, 0x10, 0x10, 0x1D0, 0x20, 0x1A8 },
+		10
+	},
+	//X2
+	{
+		new DWORD32[10] { 0x16148F0, 0x98, 0x28, 0x0, 0x100, 0x10, 0x10, 0x1D0, 0x20, 0x1C8 },
+		10
+	},
+	//Y1
+	{
+		new DWORD32[10] { 0x16148F0, 0x98, 0x28, 0x0, 0x100, 0x10, 0x10, 0x1D0, 0x20, 0x1A0 },
+		10
+	},
+	//Y2
+	{
+		new DWORD32[10] { 0x16148F0, 0x98, 0x28, 0x0, 0x100, 0x10, 0x10, 0x1D0, 0x20, 0x1C0 },
+		10
+	},
+	//GODMODE
+	{
+		new DWORD32[10] { 0x16148F0, 0xD0, 0xB8, 0x5FC },
+		4
+	}
+};

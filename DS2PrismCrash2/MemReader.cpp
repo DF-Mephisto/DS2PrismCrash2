@@ -202,3 +202,30 @@ bool dataCompare(const char* data, const char* sign, int size)
 	}
 	return true;
 }
+
+template<class T>
+void writePointer(PNAME id, T val)
+{
+	Pointer& p = pointers[static_cast<int>(id)];
+
+	if (p.length <= 0)
+		return;
+
+	DWORD64 addr = (DWORD64)mInfo.lpBaseOfDll;
+
+	for (int i = 0; i < p.length - 1; i++)
+	{
+		addr = *(DWORD64*)(addr + p.offsets[i]);
+
+		if (IsBadReadPtr((DWORD64*)addr, 8))
+			return;
+	}
+
+	addr += p.offsets[p.length - 1];
+
+	*(T*)addr = val;
+}
+
+//Template functions
+template void writePointer<float>(PNAME id, float val);
+template void writePointer<BYTE>(PNAME id, BYTE val);
