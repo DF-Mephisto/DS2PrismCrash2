@@ -226,6 +226,46 @@ void writePointer(PNAME id, T val)
 	*(T*)addr = val;
 }
 
+template<class T>
+T readPointer(PNAME id)
+{
+	Pointer& p = pointers[static_cast<int>(id)];
+
+	if (p.length <= 0)
+		throw runtime_error("error reading pointer");
+
+	DWORD64 addr = (DWORD64)mInfo.lpBaseOfDll;
+
+	for (int i = 0; i < p.length - 1; i++)
+	{
+		addr = *(DWORD64*)(addr + p.offsets[i]);
+
+		if (IsBadReadPtr((DWORD64*)addr, 8))
+			throw runtime_error("error reading pointer");
+	}
+
+	addr += p.offsets[p.length - 1];
+
+	return *(T*)addr;
+}
+
+DWORD delayedGodMode(LPVOID params)
+{
+	//Turn god mode on
+	writePointer<BYTE>(PNAME::GODMODE, 1);
+
+	//Wait for 2 seconds
+	Sleep(2000);
+
+	//Turn god mode off
+	writePointer<BYTE>(PNAME::GODMODE, 0);
+
+	return 0;
+}
+
 //Template functions
 template void writePointer<float>(PNAME id, float val);
 template void writePointer<BYTE>(PNAME id, BYTE val);
+
+template float readPointer<float>(PNAME id);
+template BYTE readPointer<BYTE>(PNAME id);

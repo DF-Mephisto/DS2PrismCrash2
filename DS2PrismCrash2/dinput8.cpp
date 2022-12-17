@@ -38,6 +38,15 @@ LRESULT CALLBACK keyDownHook(int code, WPARAM wParam, LPARAM lParam)
 			MessageBeep(0);
 			writePointer<BYTE>(PNAME::GODMODE, 1);
 			break;
+
+		case VK_F4:
+		{
+			MessageBeep(0);
+			HANDLE hThread = CreateThread(NULL, NULL, delayedGodMode, NULL, NULL, NULL);
+			CloseHandle(hThread);
+			break;
+		}
+
 		}
 
 	}

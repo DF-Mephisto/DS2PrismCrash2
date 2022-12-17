@@ -15,6 +15,10 @@ bool allocScriptMem(ScriptEnum id);
 DWORD64 getInstructionAddress(const InstructionInfo& const info);
 DWORD64 findSignature(MODULEINFO& mInfo, const char* const aob, const size_t aobSize);
 bool dataCompare(const char* data, const char* sign, int size);
+DWORD delayedGodMode(LPVOID params);
 
 template<class T>
 void writePointer(PNAME id, T val);
+
+template<class T>
+T readPointer(PNAME id);
