@@ -47,8 +47,16 @@ LRESULT CALLBACK keyDownHook(int code, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
-		}
+		case VK_F5:
+			MessageBeep(0);
+			enableScript(ScriptEnum::ZeroMap);
+			break;
 
+		case VK_F6:
+			MessageBeep(0);
+			disableScript(ScriptEnum::ZeroMap);
+			break;
+		}
 	}
 
 	return CallNextHookEx(SysHook, code, wParam, lParam);

@@ -20,5 +20,20 @@ vector<ScriptData> scripts = {
 			}
 		},
 		false
+	},
+	{
+		zeroMap,
+		{
+			SearchType::OFFSET,
+			0x2575B4,
+			0,
+			nullptr,
+			5,
+			new char[6] {"\x48\x89\x4C\x24\x28"}
+		},
+		{
+
+		},
+		false
 	}
 };

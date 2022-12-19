@@ -58,5 +58,8 @@
     <MASM Include="crashProc.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="zeroMap.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

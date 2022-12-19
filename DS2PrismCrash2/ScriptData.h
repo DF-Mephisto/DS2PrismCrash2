@@ -4,11 +4,13 @@
 extern "C"
 {
 	void crashProc();
+	void zeroMap();
 }
 
 enum class ScriptEnum
 {
-	PrismCrash = 0
+	PrismCrash = 0,
+	ZeroMap
 };
 
 enum class SearchType

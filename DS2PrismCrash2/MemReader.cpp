@@ -19,7 +19,7 @@ int64_t getScriptSize(LPVOID script)
 	int64_t size = 0;
 	BYTE* ptr = (BYTE*)script;
 
-	for (; *((DWORD*)ptr) != 0x90909090; size++, ptr++);
+	for (; *((DWORD32*)ptr) != 0x90909090; size++, ptr++);
 
 	return size;
 }
@@ -42,7 +42,7 @@ void enableScript(ScriptEnum id)
 	
 	uint16_t scriptSize = getScriptSize(data.scriptCode);
 
-	DWORD retAddress = 7 - 5 - ((DWORD64)data.scriptAddress - instAddress) - scriptSize;
+	DWORD retAddress = data.instInfo.instructionSize - 5 - ((DWORD64)data.scriptAddress - instAddress) - scriptSize;
 	char retInstr[5] = { 0xE9 };
 
 	memcpy((LPVOID)data.scriptAddress, data.scriptCode, scriptSize);

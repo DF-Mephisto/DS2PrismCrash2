@@ -157,6 +157,7 @@
     <MASM Include="crashProc.asm">
       <FileType>Document</FileType>
     </MASM>
+    <MASM Include="zeroMap.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dinput8.cpp" />
