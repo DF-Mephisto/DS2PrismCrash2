@@ -8,6 +8,7 @@
 void memoryInit();
 int64_t getScriptSize(LPVOID script);
 void enableScript(ScriptEnum id);
+void callScript(ScriptEnum id);
 void nopInstruction(ScriptEnum id);
 void disableScript(ScriptEnum id);
 DWORD64	alloc(int size);

@@ -18,20 +18,18 @@ DINPUT8_API HRESULT DirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID 
 
 LRESULT CALLBACK keyDownHook(int code, WPARAM wParam, LPARAM lParam)
 {
-	if (code == HC_ACTION && 
-		((MSG*)lParam)->message == WM_KEYDOWN &&  
-		FindWindow(NULL, L"DARK SOULS II") == ((MSG*)lParam)->hwnd)
+	if (code == HC_ACTION && lParam & (1 << 31))
 	{
-		switch (((MSG*)lParam)->wParam)
+		switch (wParam)
 		{
 		case VK_F1:
 			MessageBeep(0);
-			enableScript(ScriptEnum::PrismCrash);
+			enableScript(ScriptEnum::PRISM_CRASH);
 			break;
 
 		case VK_F2:
 			MessageBeep(0);
-			disableScript(ScriptEnum::PrismCrash);
+			disableScript(ScriptEnum::PRISM_CRASH);
 			break;
 
 		case VK_F3:
@@ -49,12 +47,22 @@ LRESULT CALLBACK keyDownHook(int code, WPARAM wParam, LPARAM lParam)
 
 		case VK_F5:
 			MessageBeep(0);
-			enableScript(ScriptEnum::ZeroMap);
+			enableScript(ScriptEnum::ZERO_MAP);
 			break;
 
 		case VK_F6:
 			MessageBeep(0);
-			disableScript(ScriptEnum::ZeroMap);
+			disableScript(ScriptEnum::ZERO_MAP);
+			break;
+
+		case VK_F7:
+			MessageBeep(0);
+			callScript(ScriptEnum::ITEM_SPAWN);
+			break;
+
+		case VK_F8:
+			MessageBeep(0);
+			disableScript(ScriptEnum::ITEM_SPAWN);
 			break;
 		}
 	}

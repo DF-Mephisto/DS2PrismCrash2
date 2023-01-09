@@ -5,17 +5,19 @@ extern "C"
 {
 	void crashProc();
 	void zeroMap();
+	void itemSpawn();
 }
 
 enum class ScriptEnum
 {
-	PrismCrash = 0,
-	ZeroMap
+	PRISM_CRASH = 0,
+	ZERO_MAP,
+	ITEM_SPAWN
 };
 
 enum class SearchType
 {
-	OFFSET, AOBSCAN
+	NONE, OFFSET, AOBSCAN
 };
 
 struct InstructionInfo

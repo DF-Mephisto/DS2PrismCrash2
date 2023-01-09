@@ -61,5 +61,8 @@
     <MASM Include="zeroMap.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="itemSpawn.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

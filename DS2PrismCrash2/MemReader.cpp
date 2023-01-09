@@ -69,6 +69,39 @@ void enableScript(ScriptEnum id)
 	delete[] jmpInstr;
 }
 
+void callScript(ScriptEnum id)
+{
+	ScriptData& data = scripts[static_cast<int>(id)];
+	if (!data.enabled)
+	{
+		data.enabled = true;
+
+		if (!allocScriptMem(id))
+		{
+			disableScript(id);
+			return;
+		}
+
+		uint16_t scriptSize = getScriptSize(data.scriptCode);
+
+		memcpy((LPVOID)data.scriptAddress, data.scriptCode, scriptSize);
+		memcpy((char*)data.scriptAddress + scriptSize + 5, &mInfo.lpBaseOfDll, 8);
+
+		int dataOffset = 8;
+
+		for (int i = 0; i < data.buffers.size(); i++)
+		{
+			DWORD64 bufAddr = data.bufferAddresses[i];
+			memcpy((LPVOID)bufAddr, data.buffers[i].data, data.buffers[i].size);
+			memcpy((char*)data.scriptAddress + scriptSize + 5 + dataOffset, &bufAddr, 8);
+			dataOffset += 8;
+		}
+	}
+
+	HANDLE hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)data.scriptAddress, NULL, NULL, NULL);
+	CloseHandle(hThread);
+}
+
 void disableScript(ScriptEnum id)
 {
 	ScriptData& data = scripts[static_cast<int>(id)];
@@ -77,9 +110,11 @@ void disableScript(ScriptEnum id)
 		return;
 	data.enabled = false;
 
-	DWORD64 instAddress = data.instAddress;
-
-	memcpy((LPVOID)instAddress, data.instInfo.originalInstruction, data.instInfo.instructionSize);
+	if (data.instInfo.searchType != SearchType::NONE)
+	{
+		DWORD64 instAddress = data.instAddress;
+		memcpy((LPVOID)instAddress, data.instInfo.originalInstruction, data.instInfo.instructionSize);
+	}
 
 	if (data.scriptAddress)
 	{

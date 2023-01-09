@@ -29,7 +29,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		init();
 		memoryInit();
 
-		SysHook = SetWindowsHookEx(WH_GETMESSAGE, (HOOKPROC)keyDownHook, hModule, GetCurrentThreadId());
+		SysHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)keyDownHook, NULL, GetCurrentThreadId());
 
 		break;
 	}

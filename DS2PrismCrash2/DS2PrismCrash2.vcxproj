@@ -157,6 +157,7 @@
     <MASM Include="crashProc.asm">
       <FileType>Document</FileType>
     </MASM>
+    <MASM Include="itemSpawn.asm" />
     <MASM Include="zeroMap.asm" />
   </ItemGroup>
   <ItemGroup>
